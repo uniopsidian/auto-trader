@@ -20,6 +20,8 @@ class Settings:
 
     kakao_access_token: str
     kakao_refresh_token: str
+    kakao_rest_api_key: str
+    kakao_client_secret: str
 
     target_market: str
     target_symbol: str
@@ -58,6 +60,8 @@ def load_settings() -> Settings:
 
         kakao_access_token=_require("KAKAO_ACCESS_TOKEN"),
         kakao_refresh_token=_require("KAKAO_REFRESH_TOKEN"),
+        kakao_rest_api_key=_require("KAKAO_REST_API_KEY"),
+        kakao_client_secret=os.getenv("KAKAO_CLIENT_SECRET", "").strip(),
 
         target_market=os.getenv("TARGET_MARKET", "NAS").strip(),
         target_symbol=os.getenv("TARGET_SYMBOL", "TQQQ").strip(),
