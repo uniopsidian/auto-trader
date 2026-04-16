@@ -33,7 +33,6 @@ class KISClient:
         data = response.json()
 
         access_token = data.get("access_token")
-        expires_in = data.get("expires_in", 0)
 
         if not access_token:
             raise RuntimeError(f"토큰 발급 실패: {data}")
@@ -49,42 +48,42 @@ class KISClient:
         return self._issue_token()
 
     def get_overseas_price(self, market: str, symbol: str) -> dict[str, Any]:
-    """
-    해외주식 현재가 조회
-    market 예시: NAS, NYS, AMS
-    symbol 예시: AAPL, TSLA, NVDA
-    """
-    url = f"{self.base_url}/uapi/overseas-price/v1/quotations/price"
-    params = {
-        "AUTH": "",
-        "EXCD": market,
-        "SYMB": symbol,
-    }
-
-    for attempt in range(2):
-        token = self._get_token()
-
-        headers = {
-            "content-type": "application/json; charset=utf-8",
-            "authorization": f"Bearer {token}",
-            "appkey": self.app_key,
-            "appsecret": self.app_secret,
-            "tr_id": "HHDFS00000300",
+        """
+        해외주식 현재가 조회
+        market 예시: NAS, NYS, AMS
+        symbol 예시: AAPL, TSLA, NVDA
+        """
+        url = f"{self.base_url}/uapi/overseas-price/v1/quotations/price"
+        params = {
+            "AUTH": "",
+            "EXCD": market,
+            "SYMB": symbol,
         }
 
-        response = requests.get(url, headers=headers, params=params, timeout=15)
+        for attempt in range(2):
+            token = self._get_token()
 
-        if response.status_code == 401 and attempt == 0:
-            self.access_token = None
-            self.token_expire_at = 0.0
-            continue
+            headers = {
+                "content-type": "application/json; charset=utf-8",
+                "authorization": f"Bearer {token}",
+                "appkey": self.app_key,
+                "appsecret": self.app_secret,
+                "tr_id": "HHDFS00000300",
+            }
 
-        response.raise_for_status()
-        data = response.json()
+            response = requests.get(url, headers=headers, params=params, timeout=15)
 
-        if data.get("rt_cd") != "0":
-            raise RuntimeError(f"해외주식 현재가 조회 실패: {data}")
+            if response.status_code == 401 and attempt == 0:
+                self.access_token = None
+                self.token_expire_at = 0.0
+                continue
 
-        return data
+            response.raise_for_status()
+            data = response.json()
 
-    raise RuntimeError("해외주식 현재가 조회 실패: 401 인증 재시도 후에도 실패")
+            if data.get("rt_cd") != "0":
+                raise RuntimeError(f"해외주식 현재가 조회 실패: {data}")
+
+            return data
+
+        raise RuntimeError("해외주식 현재가 조회 실패: 401 인증 재시도 후에도 실패")
