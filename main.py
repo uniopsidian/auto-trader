@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import time
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from config import load_settings
 from kis_client import KISClient
@@ -61,7 +62,7 @@ def main() -> None:
 
     while True:
         try:
-            now = datetime.now()
+            now = datetime.now(ZoneInfo("Asia/Seoul"))
             date_str = now.strftime("%Y-%m-%d")
             reset_day_if_needed(state, date_str)
 
