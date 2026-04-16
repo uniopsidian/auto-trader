@@ -54,6 +54,8 @@ class KISClient:
         symbol 예시: AAPL, TSLA, NVDA
         """
         token = self._get_token()
+        def ensure_token(self) -> None:
+    self._get_token()
 
         url = f"{self.base_url}/uapi/overseas-price/v1/quotations/price"
         headers = {
